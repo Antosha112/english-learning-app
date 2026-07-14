@@ -1,12 +1,10 @@
 // ============================================
-// УПРАВЛЕНИЕ ОБОЯМИ (Wallpaper Manager)
-// Кнопка сверху справа с миниатюрами
+// УПРАВЛЕНИЕ ОБОЯМИ И ЦВЕТАМИ (ПОЛНОСТЬЮ ИСПРАВЛЕННАЯ)
 // ============================================
 
-// Ключ для сохранения в LocalStorage
 const WALLPAPER_KEY = 'selected_wallpaper';
+const COLOR_KEY = 'selected_bg_color';
 
-// Список обоев (8 штук) - без названий
 const wallpapers = [
     { id: 1, file: 'wallpaper1.jpg' },
     { id: 2, file: 'wallpaper2.jpg' },
@@ -18,289 +16,280 @@ const wallpapers = [
     { id: 8, file: 'wallpaper8.jpg' },
 ];
 
-// ============================================
-// 1. УСТАНОВИТЬ ОБОИ
-// ============================================
-function setWallpaper(imageFile) {
-    if (!imageFile) {
-        // Сброс на стандартный фон
-        document.body.style.backgroundImage = '';
-        document.body.style.backgroundColor = '#b4ddda';
+const colors = [
+    { id: 1, name: 'Белый', value: '#ffffff' },
+    { id: 2, name: 'Небесный', value: '#87CEEB' },
+    { id: 3, name: 'Лаванда', value: '#E6E6FA' },
+    { id: 4, name: 'Персик', value: '#FFDAB9' },
+    { id: 5, name: 'Мята', value: '#98FB98' },
+    { id: 6, name: 'Розовый', value: '#FFB6C1' },
+    { id: 7, name: 'Жёлтый', value: '#FFFACD' },
+    { id: 8, name: 'Серый', value: '#D3D3D3' },
+];
+
+// -------- УСТАНОВИТЬ ФОН --------
+function setBackground(imageFile, colorValue) {
+    document.body.style.backgroundImage = '';
+    document.body.style.backgroundColor = '';
+    document.body.style.backgroundSize = '';
+    document.body.style.backgroundPosition = '';
+    document.body.style.backgroundAttachment = '';
+    
+    if (imageFile) {
+        document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('images/${imageFile}')`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundAttachment = 'fixed';
+        localStorage.setItem(WALLPAPER_KEY, imageFile);
+        localStorage.removeItem(COLOR_KEY);
+    } else if (colorValue) {
+        document.body.style.backgroundColor = colorValue;
+        localStorage.setItem(COLOR_KEY, colorValue);
         localStorage.removeItem(WALLPAPER_KEY);
-        updateButtonState(null);
-        return;
+    } else {
+        // По умолчанию белый фон
+        document.body.style.backgroundColor = '#ffffff';
+        localStorage.removeItem(WALLPAPER_KEY);
+        localStorage.removeItem(COLOR_KEY);
     }
-    
-    // Устанавливаем картинку как фон с затемнением
-    document.body.style.backgroundImage = `
-        linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)),
-        url('images/${imageFile}')
-    `;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundPosition = 'center';
-    document.body.style.backgroundAttachment = 'fixed';
-    
-    // Сохраняем в LocalStorage
-    localStorage.setItem(WALLPAPER_KEY, imageFile);
-    updateButtonState(imageFile);
+    updateButtonIcon();
 }
 
-// ============================================
-// 2. ЗАГРУЗИТЬ СОХРАНЁННЫЕ ОБОИ
-// ============================================
-function loadSavedWallpaper() {
-    const saved = localStorage.getItem(WALLPAPER_KEY);
-    if (saved) {
-        setWallpaper(saved);
-    }
+// -------- ЗАГРУЗИТЬ СОХРАНЁННЫЙ --------
+function loadSavedBackground() {
+    const savedWallpaper = localStorage.getItem(WALLPAPER_KEY);
+    const savedColor = localStorage.getItem(COLOR_KEY);
+    if (savedWallpaper) setBackground(savedWallpaper, null);
+    else if (savedColor) setBackground(null, savedColor);
+    else document.body.style.backgroundColor = '#ffffff';
 }
 
-// ============================================
-// 3. ОБНОВИТЬ СОСТОЯНИЕ КНОПКИ
-// ============================================
-function updateButtonState(currentFile) {
+// -------- ОБНОВИТЬ ИКОНКУ КНОПКИ --------
+function updateButtonIcon() {
     const btn = document.getElementById('wallpaperBtn');
     if (!btn) return;
-    btn.innerHTML = '🖼️';
-    btn.title = currentFile ? 'Сменить обои' : 'Выбрать обои';
+    const hasWallpaper = localStorage.getItem(WALLPAPER_KEY);
+    const hasColor = localStorage.getItem(COLOR_KEY);
+    btn.innerHTML = (hasWallpaper || hasColor) ? '🖼️' : '🎨';
 }
 
-// ============================================
-// 4. ПОКАЗАТЬ ПАНЕЛЬ ВЫБОРА ОБОЕВ
-// ============================================
+// -------- ПОКАЗАТЬ ПАНЕЛЬ --------
 function showWallpaperPanel() {
-    // Закрываем если уже открыта
     let panel = document.getElementById('wallpaperPanel');
-    if (panel) {
-        panel.remove();
-        return;
+    if (panel) { 
+        panel.remove(); 
+        return; 
     }
     
-    // Создаём панель
+    const currentWallpaper = localStorage.getItem(WALLPAPER_KEY);
+    const currentColor = localStorage.getItem(COLOR_KEY);
+    const isDefault = !currentWallpaper && !currentColor;
+    
     panel = document.createElement('div');
     panel.id = 'wallpaperPanel';
     panel.style.cssText = `
-        position: fixed;
-        top: 80px;
+        position: fixed; 
+        top: 80px; 
         right: 20px;
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(255,255,255,0.95);
         backdrop-filter: blur(10px);
         padding: 20px;
         border-radius: 16px;
         box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         z-index: 1000;
-        max-width: 320px;
+        max-width: 340px;
         width: 90%;
-        max-height: 70vh;
-        animation: slideDown 0.3s ease;
+        max-height: 80vh;
         border: 1px solid rgba(255,255,255,0.3);
-        display: flex;
-        flex-direction: column;
+        overflow-y: auto;
     `;
     
-    // Заголовок
-    panel.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0;">
-            <h4 style="margin: 0; color: #2c3e50; font-weight: normal; font-size: 16px;">
-                Выбрать обои
-            </h4>
-            <button onclick="closeWallpaperPanel()" 
-                    style="background: none; border: none; font-size: 24px; cursor: pointer; color: #95a5a6; padding: 0 5px; line-height: 1; transition: 0.3s;"
-                    onmouseover="this.style.color='#e74c3c'"
-                    onmouseout="this.style.color='#95a5a6'">
-                ×
-            </button>
+    // Адаптив для мобильных
+    if (window.innerWidth <= 480) {
+        panel.style.top = '70px';
+        panel.style.right = '10px';
+        panel.style.maxWidth = '95%';
+        panel.style.padding = '15px';
+    }
+    
+    // СОБИРАЕМ HTML В ОДНУ СТРОКУ (ЧТОБЫ ИЗБЕЖАТЬ КАШИ)
+    let html = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h4 style="margin:0; color:#2c3e50; font-weight:normal; font-size:16px;">Выбрать фон</h4>
+            <button onclick="closePanel()" style="background:none; border:none; font-size:24px; cursor:pointer; color:#95a5a6; padding:0 5px;">×</button>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; overflow-y: auto; padding-right: 5px; flex: 1;">
+        <div style="display:flex; gap:8px; margin-bottom:15px;">
+            <button id="tabWallpapersBtn" style="flex:1; padding:8px; border:2px solid #268e96; border-radius:20px; background:#268e96; color:white; cursor:pointer; font-family:inherit; font-size:13px;">🖼️ Обои</button>
+            <button id="tabColorsBtn" style="flex:1; padding:8px; border:2px solid #268e96; border-radius:20px; background:white; color:#2c3e50; cursor:pointer; font-family:inherit; font-size:13px;">🎨 Цвета</button>
+        </div>
+        
+        <!-- Сетка обоев -->
+        <div id="wallpapersGrid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; max-height:300px; overflow-y:auto; padding-right:5px;">
     `;
     
-    // Добавляем миниатюры (3 колонки, чтобы поместились)
+    // Добавляем обои в общую строку
     wallpapers.forEach(wp => {
-        const isActive = localStorage.getItem(WALLPAPER_KEY) === wp.file;
-        panel.innerHTML += `
-            <button onclick="setWallpaper('${wp.file}'); closeWallpaperPanel();" 
-                    style="
-                        padding: 0;
-                        border: 3px solid ${isActive ? '#268e96' : 'transparent'};
-                        border-radius: 8px;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                        overflow: hidden;
-                        position: relative;
-                        aspect-ratio: 1 / 1;
-                        background: #e0e0e0;
-                    "
-                    onmouseover="this.style.transform='scale(1.05)'; this.style.borderColor='#268e96';"
-                    onmouseout="this.style.transform='scale(1)'; this.style.borderColor='${isActive ? '#268e96' : 'transparent'}';">
-                <img src="images/${wp.file}" 
-                     alt="Обои ${wp.id}" 
-                     style="
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        display: block;
-                    "
-                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;color:#95a5a6;font-size:20px;\\'>${wp.id}</div>'">
-                ${isActive ? '<div style="position:absolute;top:3px;right:3px;background:#268e96;color:white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;box-shadow:0 2px 8px rgba(38,142,150,0.4);">✓</div>' : ''}
+        const active = currentWallpaper === wp.file;
+        html += `
+            <button onclick="setBackground('${wp.file}', null); closePanel();" style="position:relative; padding:0; border:3px solid ${active ? '#268e96' : 'transparent'}; border-radius:8px; cursor:pointer; overflow:hidden; aspect-ratio:1/1; background:#e0e0e0;">
+                <img src="images/${wp.file}" style="width:100%; height:100%; object-fit:cover; display:block;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;color:#95a5a6;font-size:20px;\\'>${wp.id}</div>'">
+                ${active ? '<div style="position:absolute;top:3px;right:3px;background:#268e96;color:white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;">✓</div>' : ''}
             </button>
         `;
     });
     
-    // Кнопка "Сбросить"
-    const isDefault = !localStorage.getItem(WALLPAPER_KEY);
-    panel.innerHTML += `
+    // Закрываем сетку обоев и открываем сетку цветов
+    html += `
         </div>
-        <button onclick="setWallpaper(null); closeWallpaperPanel();" 
-                style="
-                    margin-top: 12px;
-                    padding: 10px;
-                    border: 2px solid ${isDefault ? '#e74c3c' : '#e0e0e0'};
-                    border-radius: 10px;
-                    background: ${isDefault ? '#fde8e6' : '#f8f9fa'};
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    font-size: 14px;
-                    font-family: inherit;
-                    color: #e74c3c;
-                    flex-shrink: 0;
-                "
-                onmouseover="this.style.background='#fde8e6'; this.style.borderColor='#e74c3c';"
-                onmouseout="this.style.background='${isDefault ? '#fde8e6' : '#f8f9fa'}'; this.style.borderColor='${isDefault ? '#e74c3c' : '#e0e0e0'}';">
-                ${isDefault ? '✓ ' : ''}Стандартный фон
+        
+        <!-- Сетка цветов (изначально скрыта) -->
+        <div id="colorsGrid" style="display:none; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; max-height:300px; overflow-y:auto; padding-right:5px;">
+    `;
+    
+    // Добавляем цвета в общую строку
+    colors.forEach(color => {
+        const active = currentColor === color.value;
+        const textColor = isLightColor(color.value) ? '#2c3e50' : 'white';
+        html += `
+            <button onclick="setBackground(null, '${color.value}'); closePanel();" 
+                    style="position:relative; 
+                           padding:8px; 
+                           border:3px solid ${active ? '#268e96' : 'transparent'}; 
+                           border-radius:8px; 
+                           cursor:pointer; 
+                           aspect-ratio:1/1; 
+                           background:${color.value}; 
+                           display:flex; 
+                           flex-direction:column;
+                           align-items:center; 
+                           justify-content:center; 
+                           font-size:12px; 
+                           color:${textColor}; 
+                           font-weight:bold;">
+                ${active ? '<span style="position:absolute;top:3px;right:3px;background:#268e96;color:white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;">✓</span>' : ''}
+                <span style="font-size:11px; font-weight:normal; text-shadow: 0 1px 3px rgba(0,0,0,0.2);">${color.name}</span>
+            </button>
+        `;
+    });
+    
+    // Закрываем сетку цветов и добавляем нижнюю общую кнопку сброса
+    html += `
+        </div>
+        <button onclick="setBackground(null, null); closePanel();" style="margin-top:12px; padding:10px; width:100%; border:2px solid ${isDefault ? '#268e96' : '#e0e0e0'}; border-radius:10px; background:${isDefault ? '#e8f5e9' : '#f8f9fa'}; cursor:pointer; color:#268e96; font-family:inherit; font-size:14px; transition:all 0.3s;">
+            ${isDefault ? '✓ ' : ''}По умолчанию
         </button>
     `;
     
-    panel.innerHTML += `</div>`;
-    
+    // И только теперь один раз вставляем весь собранный HTML в панель
+    panel.innerHTML = html;
     document.body.appendChild(panel);
-}
-
-// ============================================
-// 5. ЗАКРЫТЬ ПАНЕЛЬ
-// ============================================
-function closeWallpaperPanel() {
-    const panel = document.getElementById('wallpaperPanel');
-    if (panel) {
-        panel.remove();
+    
+    // -------- ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК --------
+    const tabWallpapers = document.getElementById('tabWallpapersBtn');
+    const tabColors = document.getElementById('tabColorsBtn');
+    const wallpapersGrid = document.getElementById('wallpapersGrid');
+    const colorsGrid = document.getElementById('colorsGrid');
+    
+    function switchToWallpapers() {
+        wallpapersGrid.style.display = 'grid';
+        colorsGrid.style.display = 'none';
+        tabWallpapers.style.background = '#268e96';
+        tabWallpapers.style.color = 'white';
+        tabColors.style.background = 'white';
+        tabColors.style.color = '#2c3e50';
     }
+    
+    function switchToColors() {
+        wallpapersGrid.style.display = 'none';
+        colorsGrid.style.display = 'grid';
+        tabColors.style.background = '#268e96';
+        tabColors.style.color = 'white';
+        tabWallpapers.style.background = 'white';
+        tabWallpapers.style.color = '#2c3e50';
+    }
+    
+    if (tabWallpapers && tabColors && wallpapersGrid && colorsGrid) {
+        tabWallpapers.onclick = switchToWallpapers;
+        tabColors.onclick = switchToColors;
+    }
+    
+    updateButtonIcon();
 }
 
-// ============================================
-// 6. ДОБАВИТЬ КНОПКУ (СВЕРХУ СПРАВА)
-// ============================================
+// -------- ЗАКРЫТЬ ПАНЕЛЬ --------
+function closePanel() {
+    const panel = document.getElementById('wallpaperPanel');
+    if (panel) panel.remove();
+}
+
+// -------- ОПРЕДЕЛЕНИЕ СВЕТЛОГО ЦВЕТА --------
+function isLightColor(hex) {
+    const r = parseInt(hex.slice(1,3), 16);
+    const g = parseInt(hex.slice(3,5), 16);
+    const b = parseInt(hex.slice(5,7), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 > 128;
+}
+
+// -------- ДОБАВИТЬ КНОПКУ --------
 function addWallpaperButton() {
     if (document.getElementById('wallpaperBtn')) return;
-    
     const btn = document.createElement('button');
     btn.id = 'wallpaperBtn';
-    btn.innerHTML = '🖼️';
-    btn.title = 'Выбрать обои';
+    btn.innerHTML = '🎨';
+    btn.title = 'Выбрать фон';
     btn.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        border: none;
-        background: rgba(255, 255, 255, 0.85);
+        position: fixed; top: 20px; right: 20px;
+        width: 44px; height: 44px;
+        border-radius: 50%; border: none;
+        background: rgba(255,255,255,0.85);
         backdrop-filter: blur(8px);
-        color: #2c3e50;
-        font-size: 20px;
+        color: #2c3e50; font-size: 20px;
         cursor: pointer;
         box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-        transition: all 0.3s ease;
         z-index: 999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid rgba(255,255,255,0.3);
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.3s ease;
     `;
+    
+    // Адаптив для мобильных
+    if (window.innerWidth <= 480) {
+        btn.style.top = '10px';
+        btn.style.right = '10px';
+        btn.style.width = '38px';
+        btn.style.height = '38px';
+        btn.style.fontSize = '16px';
+    }
     
     btn.onmouseover = function() {
         this.style.transform = 'scale(1.08)';
-        this.style.boxShadow = '0 4px 20px rgba(38, 142, 150, 0.25)';
-        this.style.background = 'rgba(38, 142, 150, 0.9)';
+        this.style.background = 'rgba(38,142,150,0.9)';
         this.style.color = 'white';
     };
-    
     btn.onmouseout = function() {
         this.style.transform = 'scale(1)';
-        this.style.boxShadow = '0 2px 12px rgba(0,0,0,0.12)';
-        this.style.background = 'rgba(255, 255, 255, 0.85)';
+        this.style.background = 'rgba(255,255,255,0.85)';
         this.style.color = '#2c3e50';
     };
-    
     btn.onclick = showWallpaperPanel;
-    
     document.body.appendChild(btn);
-    
-    const saved = localStorage.getItem(WALLPAPER_KEY);
-    updateButtonState(saved);
+    updateButtonIcon();
 }
 
-// ============================================
-// 7. СТИЛИ
-// ============================================
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-15px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    #wallpaperPanel::-webkit-scrollbar {
-        width: 4px;
-    }
-    
-    #wallpaperPanel::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
-    }
-    
-    #wallpaperPanel::-webkit-scrollbar-thumb {
-        background: #268e96;
-        border-radius: 10px;
-    }
-    
-    #wallpaperPanel {
-        animation: slideDown 0.3s ease;
-    }
-`;
-document.head.appendChild(style);
-
-// ============================================
-// 8. ЗАКРЫТЬ ПРИ КЛИКЕ ВНЕ ПАНЕЛИ
-// ============================================
-document.addEventListener('click', function(event) {
+// -------- ЗАКРЫТЬ ПРИ КЛИКЕ ВНЕ --------
+document.addEventListener('click', function(e) {
     const panel = document.getElementById('wallpaperPanel');
     const btn = document.getElementById('wallpaperBtn');
-    
     if (panel && btn) {
-        const isClickInsidePanel = panel.contains(event.target);
-        const isClickOnButton = btn.contains(event.target);
-        
-        if (!isClickInsidePanel && !isClickOnButton) {
-            closeWallpaperPanel();
+        if (!panel.contains(e.target) && !btn.contains(e.target)) {
+            closePanel();
         }
     }
 });
 
-// ============================================
-// 9. ЗАГРУЗКА
-// ============================================
-loadSavedWallpaper();
+// -------- ЗАПУСК --------
+loadSavedBackground();
 setTimeout(addWallpaperButton, 100);
-
 window.addEventListener('pageshow', function() {
-    loadSavedWallpaper();
+    loadSavedBackground();
     setTimeout(addWallpaperButton, 100);
 });
-
-console.log('🖼️ Wallpaper Manager загружен! (3 колонки, без подписей)');
