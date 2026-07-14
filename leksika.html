@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лексика - My Learning English</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        /* Дополнительные стили только для этой страницы */
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .category-tab {
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #268e96;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        
+        .category-tab.active {
+            background: #268e96;
+            color: white;
+        }
+        
+        .category-tab:hover {
+            transform: scale(1.05);
+        }
+        
+        .add-form {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .add-form input, .add-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        .add-form input:focus, .add-form textarea:focus {
+            outline: none;
+            border-color: #268e96;
+        }
+        
+        .add-form textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        .btn-primary {
+            background: #268e96;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1a6b72;
+            transform: scale(1.02);
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .btn-edit {
+            background: #f39c12;
+            color: white;
+            margin-right: 10px;
+        }
+        
+        .btn-edit:hover {
+            background: #d68910;
+        }
+        
+        .word-list {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .word-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: left;
+            transition: all 0.3s;
+            border-left: 4px solid #268e96;
+        }
+        
+        .word-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .word-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            flex-wrap: wrap;
+        }
+        
+        .word-main {
+            flex: 1;
+        }
+        
+        .word-main h3 {
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .word-main .translation {
+            font-size: 18px;
+            color: #268e96;
+            margin-bottom: 8px;
+        }
+        
+        .word-main .example {
+            font-size: 16px;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
+        .word-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .word-actions .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 18px;
+            padding: 40px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #268e96;
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            transform: translateX(-5px);
+            color: #1a6b72;
+        }
+        
+        .count-badge {
+            display: inline-block;
+            background: #e0f2f1;
+            color: #268e96;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 480px) {
+            .word-header {
+                flex-direction: column;
+            }
+            
+            .word-actions {
+                margin-top: 15px;
+                width: 100%;
+            }
+            
+            .word-actions .btn {
+                flex: 1;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- Кнопка назад -->
+        <a href="index.html" class="back-link">← Назад к разделам</a>
+        
+        <!-- Заголовок -->
+        <h1>📝 Лексика</h1>
+        <p class="subtitle">Мои слова и фразы</p>
+        
+        <!-- Категории -->
+        <div class="category-tabs">
+            <button class="category-tab active" data-category="all">Все</button>
+            <button class="category-tab" data-category="phrasal_verbs">Фразовые глаголы</button>
+            <button class="category-tab" data-category="collocations">Устойчивые словосочетания</button>
+            <button class="category-tab" data-category="idioms">Идиомы и выражения</button>
+            <button class="category-tab" data-category="functional">Функциональный язык</button>
+            <button class="category-tab" data-category="linking">Слова-связки</button>
+        </div>
+        
+        <!-- Счётчик -->
+        <div style="text-align: right; color: #7f8c8d; font-size: 14px; margin-bottom: 20px;">
+            Всего: <span id="totalCount">0</span> слов
+        </div>
+        
+        <!-- Форма добавления -->
+        <div class="add-form">
+            <h3 style="margin-bottom: 20px; color: #2c3e50; font-weight: normal;">
+                ➕ Добавить новое слово
+            </h3>
+            
+            <select id="categorySelect" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; font-family: inherit;">
+                <option value="phrasal_verbs">Фразовые глаголы</option>
+                <option value="collocations">Устойчивые словосочетания</option>
+                <option value="idioms">Идиомы и выражения</option>
+                <option value="functional">Функциональный язык</option>
+                <option value="linking">Слова-связки</option>
+            </select>
+            
+            <input type="text" id="wordInput" placeholder="Слово/фраза на английском *" required>
+            <input type="text" id="translationInput" placeholder="Перевод на русский *" required>
+            <textarea id="exampleInput" placeholder="Пример использования (необязательно)"></textarea>
+            
+            <button class="btn btn-primary" id="addBtn">➕ Добавить</button>
+            <button class="btn" id="cancelEditBtn" style="display: none; background: #95a5a6; color: white; margin-left: 10px;">Отменить редактирование</button>
+        </div>
+        
+        <!-- Список слов -->
+        <div id="wordList" class="word-list">
+            <!-- Сюда будут добавляться слова через JavaScript -->
+        </div>
+        
+        <!-- Подпись -->
+        <p style="margin-top: 40px; color: #607f94; font-size: 14px;">
+            Сделано с ❤️ для изучения английского
+        </p>
+        
+    </div>
+    
+    <script>
+        // ============================================
+        // ВСЯ ЛОГИКА РАБОТЫ С LocalStorage
+        // ============================================
+        
+        // Ключ для хранения данных в LocalStorage
+        const STORAGE_KEY = 'english_lexis';
+        
+        // Текущая категория для фильтра
+        let currentCategory = 'all';
+        
+        // ID редактируемого слова (null если создаём новое)
+        let editingId = null;
+        
+        // ============================================
+        // 1. ПОЛУЧЕНИЕ ДАННЫХ ИЗ LocalStorage
+        // ============================================
+        function getWords() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+        
+        // ============================================
+        // 2. СОХРАНЕНИЕ ДАННЫХ В LocalStorage
+        // ============================================
+        function saveWords(words) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(words));
+        }
+        
+        // ============================================
+        // 3. ГЕНЕРАЦИЯ УНИКАЛЬНОГО ID
+        // ============================================
+        function generateId() {
+            return Date.now() + Math.floor(Math.random() * 1000);
+        }
+        
+        // ============================================
+        // 4. ДОБАВЛЕНИЕ НОВОГО СЛОВА
+        // ============================================
+        function addWord(word, translation, category, example = '') {
+            const words = getWords();
+            
+            const newWord = {
+                id: generateId(),
+                word: word.trim(),
+                translation: translation.trim(),
+                category: category,
+                example: example.trim(),
+                date: new Date().toLocaleDateString('ru-RU')
+            };
+            
+            words.push(newWord);
+            saveWords(words);
+            renderWords();
+            clearForm();
+        }
+        
+        // ============================================
+        // 5. РЕДАКТИРОВАНИЕ СЛОВА
+        // ============================================
+        function editWord(id) {
+            const words = getWords();
+            const word = words.find(w => w.id === id);
+            
+            if (!word) return;
+            
+            // Заполняем форму данными
+            document.getElementById('categorySelect').value = word.category;
+            document.getElementById('wordInput').value = word.word;
+            document.getElementById('translationInput').value = word.translation;
+            document.getElementById('exampleInput').value = word.example || '';
+            
+            // Меняем кнопку
+            document.getElementById('addBtn').textContent = '💾 Сохранить';
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+            
+            // Запоминаем ID редактируемого слова
+            editingId = id;
+        }
+        
+        // ============================================
+        // 6. СОХРАНЕНИЕ ИЗМЕНЕНИЙ (обновление)
+        // ============================================
+        function updateWord(id, word, translation, category, example = '') {
+            const words = getWords();
+            const index = words.findIndex(w => w.id === id);
+            
+            if (index === -1) return;
+            
+            words[index] = {
+                ...words[index],
+                word: word.trim(),
+                translation: translation.trim(),
+                category: category,
+                example: example.trim()
+            };
+            
+            saveWords(words);
+            renderWords();
+            clearForm();
+            cancelEdit();
+        }
+        
+        // ============================================
+        // 7. УДАЛЕНИЕ СЛОВА
+        // ============================================
+        function deleteWord(id) {
+            if (!confirm('Точно удалить это слово?')) return;
+            
+            const words = getWords();
+            const filtered = words.filter(w => w.id !== id);
+            saveWords(filtered);
+            renderWords();
+        }
+        
+        // ============================================
+        // 8. ВОЗВРАТ (восстановление) - сложно сделать без корзины
+        //    Сделаем простой вариант: сохранение в отдельный ключ
+        // ============================================
+        function restoreWord(id) {
+            // Простой вариант - запросим у пользователя ввод
+            const word = prompt('Введите слово для восстановления:');
+            if (!word) return;
+            
+            const translation = prompt('Введите перевод:');
+            if (!translation) return;
+            
+            const category = prompt('Введите категорию (phrasal_verbs, collocations, idioms, functional, linking):');
+            if (!category) return;
+            
+            const example = prompt('Введите пример (необязательно):');
+            
+            addWord(word, translation, category, example);
+        }
+        
+        // ============================================
+        // 9. ОТМЕНА РЕДАКТИРОВАНИЯ
+        // ============================================
+        function cancelEdit() {
+            editingId = null;
+            document.getElementById('addBtn').textContent = '➕ Добавить';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            clearForm();
+        }
+        
+        // ============================================
+        // 10. ОЧИСТКА ФОРМЫ
+        // ============================================
+        function clearForm() {
+            document.getElementById('wordInput').value = '';
+            document.getElementById('translationInput').value = '';
+            document.getElementById('exampleInput').value = '';
+            // Категорию не сбрасываем, пусть остаётся выбранной
+        }
+        
+        // ============================================
+        // 11. ОТОБРАЖЕНИЕ СЛОВ
+        // ============================================
+        function renderWords() {
+            const words = getWords();
+            const list = document.getElementById('wordList');
+            const totalSpan = document.getElementById('totalCount');
+            
+            // Фильтрация по категории
+            let filtered = words;
+            if (currentCategory !== 'all') {
+                filtered = words.filter(w => w.category === currentCategory);
+            }
+            
+            // Обновляем счётчик
+            totalSpan.textContent = filtered.length;
+            
+            // Если слов нет
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-message">
+                        📭 Пока нет слов. Добавь первое!
+                    </div>
+                `;
+                return;
+            }
+            
+            // Отображаем слова
+            list.innerHTML = filtered.map(word => `
+                <div class="word-item">
+                    <div class="word-header">
+                        <div class="word-main">
+                            <h3>${escapeHtml(word.word)}</h3>
+                            <div class="translation">${escapeHtml(word.translation)}</div>
+                            ${word.example ? `<div class="example">📖 "${escapeHtml(word.example)}"</div>` : ''}
+                            <div style="margin-top: 8px; font-size: 12px; color: #95a5a6;">
+                                📅 ${word.date || 'Неизвестно'} • 
+                                🏷️ ${getCategoryLabel(word.category)}
+                            </div>
+                        </div>
+                        <div class="word-actions">
+                            <button class="btn btn-edit" onclick="editWord(${word.id})">✏️</button>
+                            <button class="btn btn-danger" onclick="deleteWord(${word.id})">🗑️</button>
+                            <button class="btn" style="background: #27ae60; color: white;" onclick="restoreWord(${word.id})">↩️</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // ============================================
+        // 12. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+        // ============================================
+        
+        // Экранирование HTML (для безопасности)
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Получение названия категории
+        function getCategoryLabel(category) {
+            const labels = {
+                'phrasal_verbs': 'Фразовые глаголы',
+                'collocations': 'Устойчивые словосочетания',
+                'idioms': 'Идиомы и выражения',
+                'functional': 'Функциональный язык',
+                'linking': 'Слова-связки'
+            };
+            return labels[category] || category;
+        }
+        
+        // ============================================
+        // 13. ОБРАБОТЧИКИ СОБЫТИЙ
+        // ============================================
+        
+        // Добавление/сохранение
+        document.getElementById('addBtn').addEventListener('click', function() {
+            const category = document.getElementById('categorySelect').value;
+            const word = document.getElementById('wordInput').value;
+            const translation = document.getElementById('translationInput').value;
+            const example = document.getElementById('exampleInput').value;
+            
+            // Проверка на пустые поля
+            if (!word.trim() || !translation.trim()) {
+                alert('Пожалуйста, заполни слово и перевод!');
+                return;
+            }
+            
+            if (editingId !== null) {
+                // Редактирование
+                updateWord(editingId, word, translation, category, example);
+            } else {
+                // Добавление
+                addWord(word, translation, category, example);
+            }
+        });
+        
+        // Отмена редактирования
+        document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
+        
+        // Переключение категорий
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Убираем активный класс у всех
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                // Добавляем активный класс текущей
+                this.classList.add('active');
+                
+                // Меняем фильтр
+                currentCategory = this.dataset.category;
+                renderWords();
+            });
+        });
+        
+        // Enter в полях ввода
+        document.getElementById('wordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('translationInput').focus();
+            }
+        });
+        
+        document.getElementById('translationInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('exampleInput').focus();
+            }
+        });
+        
+        document.getElementById('exampleInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('addBtn').click();
+            }
+        });
+        
+        // ============================================
+        // 14. ЗАГРУЗКА ПРИ СТАРТЕ
+        // ============================================
+        renderWords();
+        
+        // ============================================
+        // 15. ПРИМЕР ДЛЯ ТЕСТА (добавим пару слов, если пусто)
+        // ============================================
+        const testWords = getWords();
+        if (testWords.length === 0) {
+            // Добавим примеры для демонстрации
+            const examples = [
+                { word: 'look after', translation: 'заботиться', category: 'phrasal_verbs', example: 'She looks after her little sister.' },
+                { word: 'break up', translation: 'расставаться', category: 'phrasal_verbs', example: 'They broke up after 2 years.' },
+                { word: 'strong coffee', translation: 'крепкий кофе', category: 'collocations', example: 'I need a strong coffee in the morning.' },
+                { word: 'piece of cake', translation: 'легко, проще простого', category: 'idioms', example: 'The exam was a piece of cake!' },
+                { word: 'to be honest', translation: 'честно говоря', category: 'functional', example: 'To be honest, I didn\'t like it.' },
+                { word: 'however', translation: 'однако', category: 'linking', example: 'I like it; however, it\'s too expensive.' }
+            ];
+            
+            examples.forEach(ex => {
+                addWord(ex.word, ex.translation, ex.category, ex.example);
+            });
+        }
+    </script>
+</body>
+</html>

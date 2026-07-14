@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Времена - My Learning English</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        /* Копируем стили из грамматики + добавляем фильтры */
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #268e96;
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            transform: translateX(-5px);
+            color: #1a6b72;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .filter-tab {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #268e96;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .filter-tab.active {
+            background: #268e96;
+            color: white;
+        }
+        
+        .filter-tab:hover {
+            transform: scale(1.05);
+        }
+        
+        .add-form {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .add-form input, .add-form textarea, .add-form select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        .add-form input:focus, .add-form textarea:focus, .add-form select:focus {
+            outline: none;
+            border-color: #268e96;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        .btn-primary {
+            background: #268e96;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1a6b72;
+            transform: scale(1.02);
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .btn-edit {
+            background: #f39c12;
+            color: white;
+            margin-right: 10px;
+        }
+        
+        .btn-edit:hover {
+            background: #d68910;
+        }
+        
+        .tense-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: left;
+            transition: all 0.3s;
+            border-left: 4px solid #9b59b6;
+        }
+        
+        .tense-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .tense-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            flex-wrap: wrap;
+        }
+        
+        .tense-header h3 {
+            font-size: 22px;
+            color: #2c3e50;
+            font-weight: normal;
+            margin-bottom: 8px;
+        }
+        
+        .tense-content {
+            color: #2c3e50;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+        
+        .tense-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .tense-actions .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        
+        .tense-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 5px;
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 18px;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Назад к разделам</a>
+        
+        <h1>⏰ Времена</h1>
+        <p class="subtitle">Все времена глаголов</p>
+        
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">Все</button>
+            <button class="filter-tab" data-filter="present">Present</button>
+            <button class="filter-tab" data-filter="past">Past</button>
+            <button class="filter-tab" data-filter="future">Future</button>
+        </div>
+        
+        <div style="text-align: right; color: #7f8c8d; font-size: 14px; margin-bottom: 20px;">
+            Всего: <span id="totalCount">0</span> тем
+        </div>
+        
+        <div class="add-form">
+            <h3 style="margin-bottom: 20px; color: #2c3e50; font-weight: normal;">⏳ Добавить время</h3>
+            
+            <input type="text" id="titleInput" placeholder="Название времени *">
+            <select id="categorySelect">
+                <option value="present">Present</option>
+                <option value="past">Past</option>
+                <option value="future">Future</option>
+            </select>
+            <textarea id="contentInput" placeholder="Описание, формула, примеры *" rows="5"></textarea>
+            
+            <button class="btn btn-primary" id="addBtn">➕ Добавить</button>
+            <button class="btn" id="cancelEditBtn" style="display: none; background: #95a5a6; color: white; margin-left: 10px;">Отменить</button>
+        </div>
+        
+        <div id="tenseList">
+            <!-- Сюда будут добавляться времена -->
+        </div>
+        
+        <p style="margin-top: 40px; color: #607f94; font-size: 14px;">
+            Сделано с ❤️ для изучения английского
+        </p>
+    </div>
+    
+    <script>
+        const STORAGE_KEY = 'english_tenses';
+        let editingId = null;
+        let currentFilter = 'all';
+        
+        function getItems() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+        
+        function saveItems(items) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        }
+        
+        function generateId() {
+            return Date.now() + Math.floor(Math.random() * 1000);
+        }
+        
+        function addItem(title, category, content) {
+            const items = getItems();
+            
+            const newItem = {
+                id: generateId(),
+                title: title.trim(),
+                category: category,
+                content: content.trim(),
+                date: new Date().toLocaleDateString('ru-RU')
+            };
+            
+            items.push(newItem);
+            saveItems(items);
+            renderItems();
+            clearForm();
+        }
+        
+        function editItem(id) {
+            const items = getItems();
+            const item = items.find(i => i.id === id);
+            
+            if (!item) return;
+            
+            document.getElementById('titleInput').value = item.title;
+            document.getElementById('categorySelect').value = item.category;
+            document.getElementById('contentInput').value = item.content;
+            
+            document.getElementById('addBtn').textContent = '💾 Сохранить';
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+            editingId = id;
+        }
+        
+        function updateItem(id, title, category, content) {
+            const items = getItems();
+            const index = items.findIndex(i => i.id === id);
+            
+            if (index === -1) return;
+            
+            items[index] = {
+                ...items[index],
+                title: title.trim(),
+                category: category,
+                content: content.trim()
+            };
+            
+            saveItems(items);
+            renderItems();
+            clearForm();
+            cancelEdit();
+        }
+        
+        function deleteItem(id) {
+            if (!confirm('Точно удалить это время?')) return;
+            
+            const items = getItems();
+            const filtered = items.filter(i => i.id !== id);
+            saveItems(filtered);
+            renderItems();
+        }
+        
+        function cancelEdit() {
+            editingId = null;
+            document.getElementById('addBtn').textContent = '➕ Добавить';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            clearForm();
+        }
+        
+        function clearForm() {
+            document.getElementById('titleInput').value = '';
+            document.getElementById('contentInput').value = '';
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function getCategoryLabel(category) {
+            const labels = {
+                'present': 'Present',
+                'past': 'Past',
+                'future': 'Future'
+            };
+            return labels[category] || category;
+        }
+        
+        function renderItems() {
+            const items = getItems();
+            const list = document.getElementById('tenseList');
+            const totalSpan = document.getElementById('totalCount');
+            
+            // Фильтрация
+            let filtered = items;
+            if (currentFilter !== 'all') {
+                filtered = items.filter(i => i.category === currentFilter);
+            }
+            
+            totalSpan.textContent = filtered.length;
+            
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-message">
+                        📭 Пока нет тем. Добавь первую!
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = filtered.map(item => `
+                <div class="tense-item">
+                    <div class="tense-header">
+                        <div>
+                            <h3>${escapeHtml(item.title)}</h3>
+                            <span class="tense-badge">${getCategoryLabel(item.category)}</span>
+                            <div style="font-size: 12px; color: #95a5a6; margin-top: 5px;">
+                                📅 ${item.date || 'Неизвестно'}
+                            </div>
+                        </div>
+                        <div class="tense-actions">
+                            <button class="btn btn-edit" onclick="editItem(${item.id})">✏️</button>
+                            <button class="btn btn-danger" onclick="deleteItem(${item.id})">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="tense-content">${escapeHtml(item.content).replace(/\n/g, '<br>')}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Обработчики
+        document.getElementById('addBtn').addEventListener('click', function() {
+            const title = document.getElementById('titleInput').value;
+            const category = document.getElementById('categorySelect').value;
+            const content = document.getElementById('contentInput').value;
+            
+            if (!title.trim() || !content.trim()) {
+                alert('Пожалуйста, заполни все поля!');
+                return;
+            }
+            
+            if (editingId !== null) {
+                updateItem(editingId, title, category, content);
+            } else {
+                addItem(title, category, content);
+            }
+        });
+        
+        document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
+        
+        // Фильтры
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                renderItems();
+            });
+        });
+        
+        // Загрузка
+        renderItems();
+        
+        // Тестовые данные
+        const testItems = getItems();
+        if (testItems.length === 0) {
+            addItem(
+                'Present Simple',
+                'present',
+                'Используется для:\n- Фактов (The sun rises in the east)\n- Привычек (I drink coffee every morning)\n- Расписаний (The train leaves at 9 AM)\n\nФормула: I/You/We/They + V1\nHe/She/It + V1 + s/es\n\nПример: I work every day.'
+            );
+            addItem(
+                'Past Simple',
+                'past',
+                'Используется для:\n- Завершённых действий в прошлом (I visited London last year)\n- Последовательности действий (I came, I saw, I conquered)\n\nФормула: V2 (правильные +ed, неправильные 2-я форма)\n\nПример: She went to school yesterday.'
+            );
+            addItem(
+                'Future Simple',
+                'future',
+                'Используется для:\n- Предсказаний (It will rain tomorrow)\n- Обещаний (I will call you later)\n- Спонтанных решений (I\'ll have coffee, please)\n\nФормула: will + V1\n\nПример: They will arrive at 5 PM.'
+            );
+        }
+    </script>
+</body>
+</html>

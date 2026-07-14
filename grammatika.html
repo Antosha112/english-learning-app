@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Грамматика - My Learning English</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #268e96;
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            transform: translateX(-5px);
+            color: #1a6b72;
+        }
+        
+        .add-form {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .add-form input, .add-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        .add-form input:focus, .add-form textarea:focus {
+            outline: none;
+            border-color: #268e96;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        .btn-primary {
+            background: #268e96;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1a6b72;
+            transform: scale(1.02);
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .btn-edit {
+            background: #f39c12;
+            color: white;
+            margin-right: 10px;
+        }
+        
+        .btn-edit:hover {
+            background: #d68910;
+        }
+        
+        .grammar-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: left;
+            transition: all 0.3s;
+            border-left: 4px solid #268e96;
+        }
+        
+        .grammar-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .grammar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            flex-wrap: wrap;
+        }
+        
+        .grammar-header h3 {
+            font-size: 22px;
+            color: #2c3e50;
+            font-weight: normal;
+            margin-bottom: 8px;
+        }
+        
+        .grammar-content {
+            color: #2c3e50;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+        
+        .grammar-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .grammar-actions .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 18px;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Назад к разделам</a>
+        
+        <h1>📚 Грамматика</h1>
+        <p class="subtitle">Правила и упражнения</p>
+        
+        <div style="text-align: right; color: #7f8c8d; font-size: 14px; margin-bottom: 20px;">
+            Всего: <span id="totalCount">0</span> тем
+        </div>
+        
+        <div class="add-form">
+            <h3 style="margin-bottom: 20px; color: #2c3e50; font-weight: normal;">📖 Добавить тему</h3>
+            
+            <input type="text" id="titleInput" placeholder="Название темы *">
+            <textarea id="contentInput" placeholder="Содержание (правила, примеры) *" rows="5"></textarea>
+            
+            <button class="btn btn-primary" id="addBtn">➕ Добавить</button>
+            <button class="btn" id="cancelEditBtn" style="display: none; background: #95a5a6; color: white; margin-left: 10px;">Отменить</button>
+        </div>
+        
+        <div id="grammarList">
+            <!-- Сюда будут добавляться темы -->
+        </div>
+        
+        <p style="margin-top: 40px; color: #607f94; font-size: 14px;">
+            Сделано с ❤️ для изучения английского
+        </p>
+    </div>
+    
+    <script>
+        const STORAGE_KEY = 'english_grammar';
+        let editingId = null;
+        
+        function getItems() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+        
+        function saveItems(items) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        }
+        
+        function generateId() {
+            return Date.now() + Math.floor(Math.random() * 1000);
+        }
+        
+        function addItem(title, content) {
+            const items = getItems();
+            
+            const newItem = {
+                id: generateId(),
+                title: title.trim(),
+                content: content.trim(),
+                date: new Date().toLocaleDateString('ru-RU')
+            };
+            
+            items.push(newItem);
+            saveItems(items);
+            renderItems();
+            clearForm();
+        }
+        
+        function editItem(id) {
+            const items = getItems();
+            const item = items.find(i => i.id === id);
+            
+            if (!item) return;
+            
+            document.getElementById('titleInput').value = item.title;
+            document.getElementById('contentInput').value = item.content;
+            
+            document.getElementById('addBtn').textContent = '💾 Сохранить';
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+            editingId = id;
+        }
+        
+        function updateItem(id, title, content) {
+            const items = getItems();
+            const index = items.findIndex(i => i.id === id);
+            
+            if (index === -1) return;
+            
+            items[index] = {
+                ...items[index],
+                title: title.trim(),
+                content: content.trim()
+            };
+            
+            saveItems(items);
+            renderItems();
+            clearForm();
+            cancelEdit();
+        }
+        
+        function deleteItem(id) {
+            if (!confirm('Точно удалить эту тему?')) return;
+            
+            const items = getItems();
+            const filtered = items.filter(i => i.id !== id);
+            saveItems(filtered);
+            renderItems();
+        }
+        
+        function cancelEdit() {
+            editingId = null;
+            document.getElementById('addBtn').textContent = '➕ Добавить';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            clearForm();
+        }
+        
+        function clearForm() {
+            document.getElementById('titleInput').value = '';
+            document.getElementById('contentInput').value = '';
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function renderItems() {
+            const items = getItems();
+            const list = document.getElementById('grammarList');
+            const totalSpan = document.getElementById('totalCount');
+            
+            totalSpan.textContent = items.length;
+            
+            if (items.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-message">
+                        📭 Пока нет тем. Добавь первую!
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = items.map(item => `
+                <div class="grammar-item">
+                    <div class="grammar-header">
+                        <div>
+                            <h3>${escapeHtml(item.title)}</h3>
+                            <div style="font-size: 12px; color: #95a5a6;">
+                                📅 ${item.date || 'Неизвестно'}
+                            </div>
+                        </div>
+                        <div class="grammar-actions">
+                            <button class="btn btn-edit" onclick="editItem(${item.id})">✏️</button>
+                            <button class="btn btn-danger" onclick="deleteItem(${item.id})">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="grammar-content">${escapeHtml(item.content).replace(/\n/g, '<br>')}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Обработчики
+        document.getElementById('addBtn').addEventListener('click', function() {
+            const title = document.getElementById('titleInput').value;
+            const content = document.getElementById('contentInput').value;
+            
+            if (!title.trim() || !content.trim()) {
+                alert('Пожалуйста, заполни все поля!');
+                return;
+            }
+            
+            if (editingId !== null) {
+                updateItem(editingId, title, content);
+            } else {
+                addItem(title, content);
+            }
+        });
+        
+        document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
+        
+        // Загрузка
+        renderItems();
+        
+        // Тестовые данные
+        const testItems = getItems();
+        if (testItems.length === 0) {
+            addItem(
+                'Present Simple',
+                'Используется для:\n- Фактов (The sun rises in the east)\n- Привычек (I drink coffee every morning)\n- Расписаний (The train leaves at 9 AM)\n\nФормула: I/You/We/They + V1\nHe/She/It + V1 + s/es'
+            );
+            addItem(
+                'Present Continuous',
+                'Используется для:\n- Действий прямо сейчас (I am reading now)\n- Временных ситуаций (I am living in London this year)\n- Планов на ближайшее будущее (I am meeting him tomorrow)\n\nФормула: am/is/are + V-ing'
+            );
+        }
+    </script>
+</body>
+</html>

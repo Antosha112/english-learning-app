@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фонетика - My Learning English</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #268e96;
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            transform: translateX(-5px);
+            color: #1a6b72;
+        }
+        
+        .add-form {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .add-form input, .add-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        .add-form input:focus, .add-form textarea:focus {
+            outline: none;
+            border-color: #268e96;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        .btn-primary {
+            background: #268e96;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1a6b72;
+            transform: scale(1.02);
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .btn-edit {
+            background: #f39c12;
+            color: white;
+            margin-right: 10px;
+        }
+        
+        .btn-edit:hover {
+            background: #d68910;
+        }
+        
+        .btn-play {
+            background: #27ae60;
+            color: white;
+            margin-right: 10px;
+        }
+        
+        .btn-play:hover {
+            background: #229954;
+        }
+        
+        .phonetic-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: left;
+            transition: all 0.3s;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .phonetic-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .phonetic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            flex-wrap: wrap;
+        }
+        
+        .phonetic-header h3 {
+            font-size: 28px;
+            color: #2c3e50;
+            font-weight: normal;
+            margin-bottom: 5px;
+        }
+        
+        .phonetic-header .sound {
+            font-size: 22px;
+            color: #268e96;
+        }
+        
+        .phonetic-content {
+            color: #2c3e50;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+        
+        .phonetic-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .phonetic-actions .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 18px;
+            padding: 40px;
+        }
+        
+        .audio-player {
+            margin-top: 10px;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .audio-player audio {
+            width: 100%;
+        }
+        
+        .example-word {
+            font-size: 20px;
+            color: #2c3e50;
+            margin: 5px 0;
+        }
+        
+        .example-word .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Назад к разделам</a>
+        
+        <h1>🔊 Фонетика</h1>
+        <p class="subtitle">Произношение и звуки</p>
+        
+        <div style="text-align: right; color: #7f8c8d; font-size: 14px; margin-bottom: 20px;">
+            Всего: <span id="totalCount">0</span> звуков
+        </div>
+        
+        <div class="add-form">
+            <h3 style="margin-bottom: 20px; color: #2c3e50; font-weight: normal;">🎧 Добавить звук</h3>
+            
+            <input type="text" id="titleInput" placeholder="Название звука (например: /θ/ - th) *">
+            <input type="text" id="exampleInput" placeholder="Пример слова (например: think, thanks)">
+            <input type="url" id="audioInput" placeholder="Ссылка на аудио (MP3/WAV) - необязательно">
+            <textarea id="descriptionInput" placeholder="Описание: как произносить, особенности" rows="3"></textarea>
+            
+            <button class="btn btn-primary" id="addBtn">➕ Добавить</button>
+            <button class="btn" id="cancelEditBtn" style="display: none; background: #95a5a6; color: white; margin-left: 10px;">Отменить</button>
+        </div>
+        
+        <div id="phoneticList">
+            <!-- Сюда будут добавляться звуки -->
+        </div>
+        
+        <p style="margin-top: 40px; color: #607f94; font-size: 14px;">
+            Сделано с ❤️ для изучения английского
+        </p>
+    </div>
+    
+    <script>
+        const STORAGE_KEY = 'english_phonetics';
+        let editingId = null;
+        
+        function getItems() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        }
+        
+        function saveItems(items) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        }
+        
+        function generateId() {
+            return Date.now() + Math.floor(Math.random() * 1000);
+        }
+        
+        function addItem(title, example, audio, description) {
+            const items = getItems();
+            
+            const newItem = {
+                id: generateId(),
+                title: title.trim(),
+                example: example.trim() || '',
+                audio: audio.trim() || '',
+                description: description.trim() || '',
+                date: new Date().toLocaleDateString('ru-RU')
+            };
+            
+            items.push(newItem);
+            saveItems(items);
+            renderItems();
+            clearForm();
+        }
+        
+        function editItem(id) {
+            const items = getItems();
+            const item = items.find(i => i.id === id);
+            
+            if (!item) return;
+            
+            document.getElementById('titleInput').value = item.title;
+            document.getElementById('exampleInput').value = item.example || '';
+            document.getElementById('audioInput').value = item.audio || '';
+            document.getElementById('descriptionInput').value = item.description || '';
+            
+            document.getElementById('addBtn').textContent = '💾 Сохранить';
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+            editingId = id;
+        }
+        
+        function updateItem(id, title, example, audio, description) {
+            const items = getItems();
+            const index = items.findIndex(i => i.id === id);
+            
+            if (index === -1) return;
+            
+            items[index] = {
+                ...items[index],
+                title: title.trim(),
+                example: example.trim() || '',
+                audio: audio.trim() || '',
+                description: description.trim() || ''
+            };
+            
+            saveItems(items);
+            renderItems();
+            clearForm();
+            cancelEdit();
+        }
+        
+        function deleteItem(id) {
+            if (!confirm('Точно удалить этот звук?')) return;
+            
+            const items = getItems();
+            const filtered = items.filter(i => i.id !== id);
+            saveItems(filtered);
+            renderItems();
+        }
+        
+        function cancelEdit() {
+            editingId = null;
+            document.getElementById('addBtn').textContent = '➕ Добавить';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            clearForm();
+        }
+        
+        function clearForm() {
+            document.getElementById('titleInput').value = '';
+            document.getElementById('exampleInput').value = '';
+            document.getElementById('audioInput').value = '';
+            document.getElementById('descriptionInput').value = '';
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function playAudio(audioUrl) {
+            if (!audioUrl) {
+                alert('Аудио не добавлено!');
+                return;
+            }
+            
+            // Создаём аудио элемент
+            const audio = new Audio(audioUrl);
+            audio.play().catch(error => {
+                console.error('Ошибка воспроизведения:', error);
+                alert('Не удалось воспроизвести аудио. Проверь ссылку.');
+            });
+        }
+        
+        function renderItems() {
+            const items = getItems();
+            const list = document.getElementById('phoneticList');
+            const totalSpan = document.getElementById('totalCount');
+            
+            totalSpan.textContent = items.length;
+            
+            if (items.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-message">
+                        📭 Пока нет звуков. Добавь первый!
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = items.map(item => `
+                <div class="phonetic-item">
+                    <div class="phonetic-header">
+                        <div>
+                            <h3>${escapeHtml(item.title)}</h3>
+                            ${item.example ? `<div class="example-word">Пример: ${escapeHtml(item.example)}</div>` : ''}
+                            <div style="font-size: 12px; color: #95a5a6; margin-top: 5px;">
+                                📅 ${item.date || 'Неизвестно'}
+                            </div>
+                        </div>
+                        <div class="phonetic-actions">
+                            ${item.audio ? `<button class="btn btn-play" onclick="playAudio('${escapeHtml(item.audio)}')">▶️ Слушать</button>` : ''}
+                            <button class="btn btn-edit" onclick="editItem(${item.id})">✏️</button>
+                            <button class="btn btn-danger" onclick="deleteItem(${item.id})">🗑️</button>
+                        </div>
+                    </div>
+                    ${item.description ? `<div class="phonetic-content">${escapeHtml(item.description)}</div>` : ''}
+                    ${item.audio ? `
+                        <div class="audio-player">
+                            <audio controls>
+                                <source src="${escapeHtml(item.audio)}" type="audio/mpeg">
+                                Твой браузер не поддерживает аудио
+                            </audio>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+        
+        // Обработчики
+        document.getElementById('addBtn').addEventListener('click', function() {
+            const title = document.getElementById('titleInput').value;
+            const example = document.getElementById('exampleInput').value;
+            const audio = document.getElementById('audioInput').value;
+            const description = document.getElementById('descriptionInput').value;
+            
+            if (!title.trim()) {
+                alert('Пожалуйста, заполни название звука!');
+                return;
+            }
+            
+            if (editingId !== null) {
+                updateItem(editingId, title, example, audio, description);
+            } else {
+                addItem(title, example, audio, description);
+            }
+        });
+        
+        document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
+        
+        // Загрузка
+        renderItems();
+        
+        // Тестовые данные
+        const testItems = getItems();
+        if (testItems.length === 0) {
+            addItem(
+                '/θ/ - глухой межзубный',
+                'think, thanks, three',
+                '',
+                'Кончик языка между зубами. Произносим как "с", но с шипением.'
+            );
+            addItem(
+                '/ð/ - звонкий межзубный',
+                'this, that, the, mother',
+                '',
+                'Кончик языка между зубами. Произносим как "з", но с вибрацией.'
+            );
+            addItem(
+                '/r/ - альвеолярный',
+                'red, run, very',
+                '',
+                'Язык свёрнут в трубочку или поднят к нёбу. Губы округлены.'
+            );
+        }
+    </script>
+</body>
+</html>
