@@ -20,34 +20,199 @@
             color: #1a6b72;
         }
         
-        .add-form {
+        /* ===== КАТЕГОРИИ (вкладки) ===== */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0 30px 0;
+        }
+        
+        .category-tab {
+            padding: 8px 16px;
+            background: white;
+            border: 2px solid #268e96;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            color: #2c3e50;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        
+        .category-tab.active {
+            background: #268e96;
+            color: white;
+        }
+        
+        .category-tab:hover {
+            transform: scale(1.05);
+        }
+        
+        /* ===== ГРУППЫ (подкатегории) ===== */
+        .group-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .group-section.active {
+            display: block;
+        }
+        
+        .group-title {
+            font-size: 22px;
+            color: #2c3e50;
+            font-weight: normal;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        /* ===== ТАБЛИЦА ЗВУКОВ ===== */
+        .sound-table {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .sound-card {
             background: white;
             border-radius: 12px;
-            padding: 30px;
-            margin: 20px 0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
         }
         
-        .add-form input, .add-form textarea {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            font-family: inherit;
-        }
-        
-        .add-form input:focus, .add-form textarea:focus {
-            outline: none;
+        .sound-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
             border-color: #268e96;
         }
         
+        .sound-card .symbol {
+            font-size: 36px;
+            color: #2c3e50;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .sound-card .example {
+            font-size: 16px;
+            color: #268e96;
+            margin: 5px 0;
+        }
+        
+        .sound-card .description {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        .sound-card .play-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: 0.3s;
+            color: #7f8c8d;
+        }
+        
+        .sound-card .play-btn:hover {
+            color: #268e96;
+            transform: scale(1.2);
+        }
+        
+        /* ===== ДЕТАЛЬНЫЙ ПРОСМОТР (всплывающее окно) ===== */
+        .sound-detail-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .sound-detail-overlay.open {
+            display: flex;
+        }
+        
+        .sound-detail-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: scaleIn 0.3s ease;
+            position: relative;
+        }
+        
+        .sound-detail-card .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #95a5a6;
+            transition: 0.3s;
+        }
+        
+        .sound-detail-card .close-btn:hover {
+            color: #e74c3c;
+            transform: rotate(90deg);
+        }
+        
+        .sound-detail-card .big-symbol {
+            font-size: 72px;
+            color: #2c3e50;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+        }
+        
+        .sound-detail-card .big-example {
+            font-size: 24px;
+            color: #268e96;
+            margin: 10px 0;
+        }
+        
+        .sound-detail-card .big-description {
+            font-size: 18px;
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin: 15px 0;
+        }
+        
+        .sound-detail-card .big-audio {
+            margin-top: 20px;
+        }
+        
+        .sound-detail-card .big-audio audio {
+            width: 100%;
+        }
+        
+        /* ===== КНОПКИ ===== */
         .btn {
-            padding: 12px 30px;
+            padding: 10px 20px;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.3s;
             font-family: inherit;
@@ -75,102 +240,83 @@
         .btn-edit {
             background: #f39c12;
             color: white;
-            margin-right: 10px;
         }
         
         .btn-edit:hover {
             background: #d68910;
         }
         
-        .btn-play {
-            background: #27ae60;
-            color: white;
-            margin-right: 10px;
-        }
-        
-        .btn-play:hover {
-            background: #229954;
-        }
-        
-        .phonetic-item {
+        /* ===== ФОРМА ДОБАВЛЕНИЯ ===== */
+        .add-form {
             background: white;
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
+            padding: 25px;
+            margin: 20px 0;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-align: left;
-            transition: all 0.3s;
-            border-left: 4px solid #e74c3c;
         }
         
-        .phonetic-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        .add-form input, .add-form textarea, .add-form select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
         }
         
-        .phonetic-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            flex-wrap: wrap;
+        .add-form input:focus, .add-form textarea:focus, .add-form select:focus {
+            outline: none;
+            border-color: #268e96;
         }
         
-        .phonetic-header h3 {
-            font-size: 28px;
-            color: #2c3e50;
-            font-weight: normal;
-            margin-bottom: 5px;
+        .add-form .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
         
-        .phonetic-header .sound {
-            font-size: 22px;
-            color: #268e96;
+        /* ===== АНИМАЦИИ ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        .phonetic-content {
-            color: #2c3e50;
-            line-height: 1.6;
-            margin-top: 10px;
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
         
-        .phonetic-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 600px) {
+            .sound-table {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+            
+            .sound-detail-card {
+                padding: 30px 20px;
+            }
+            
+            .sound-detail-card .big-symbol {
+                font-size: 48px;
+            }
+            
+            .add-form .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .category-tab {
+                font-size: 13px;
+                padding: 6px 14px;
+            }
         }
         
-        .phonetic-actions .btn {
-            padding: 8px 16px;
-            font-size: 14px;
-        }
-        
+        /* ===== ПУСТОЕ СООБЩЕНИЕ ===== */
         .empty-message {
             text-align: center;
             color: #7f8c8d;
             font-size: 18px;
             padding: 40px;
-        }
-        
-        .audio-player {
-            margin-top: 10px;
-            width: 100%;
-            max-width: 300px;
-        }
-        
-        .audio-player audio {
-            width: 100%;
-        }
-        
-        .example-word {
-            font-size: 20px;
-            color: #2c3e50;
-            margin: 5px 0;
-        }
-        
-        .example-word .highlight {
-            color: #e74c3c;
-            font-weight: bold;
         }
     </style>
 </head>
@@ -179,26 +325,53 @@
         <a href="index.html" class="back-link">← Назад к разделам</a>
         
         <h1>🔊 Фонетика</h1>
-        <p class="subtitle">Произношение и звуки</p>
+        <p class="subtitle">Звуки английского языка</p>
         
-        <div style="text-align: right; color: #7f8c8d; font-size: 14px; margin-bottom: 20px;">
-            Всего: <span id="totalCount">0</span> звуков
+        <div style="text-align: right; color: #7f8c8d; font-size: 14px; margin-bottom: 10px;">
+            Всего звуков: <span id="totalCount">0</span>
         </div>
         
+        <!-- ===== ВКЛАДКИ КАТЕГОРИЙ ===== -->
+        <div class="category-tabs" id="categoryTabs">
+            <button class="category-tab active" data-category="vowels">Гласные</button>
+            <button class="category-tab" data-category="consonants">Согласные</button>
+            <button class="category-tab" data-category="transcription">Транскрипция</button>
+            <button class="category-tab" data-category="all">Все звуки</button>
+        </div>
+        
+        <!-- ===== КОНТЕЙНЕР ДЛЯ ГРУПП ===== -->
+        <div id="groupsContainer">
+            <!-- Сюда будут вставляться группы через JavaScript -->
+        </div>
+        
+        <!-- ===== ФОРМА ДОБАВЛЕНИЯ ===== -->
         <div class="add-form">
-            <h3 style="margin-bottom: 20px; color: #2c3e50; font-weight: normal;">🎧 Добавить звук</h3>
+            <h3 style="margin-bottom: 15px; color: #2c3e50; font-weight: normal;">➕ Добавить звук</h3>
             
-            <input type="text" id="titleInput" placeholder="Название звука (например: /θ/ - th) *">
-            <input type="text" id="exampleInput" placeholder="Пример слова (например: think, thanks)">
-            <input type="url" id="audioInput" placeholder="Ссылка на аудио (MP3/WAV) - необязательно">
+            <div class="form-row">
+                <input type="text" id="symbolInput" placeholder="Символ (например: /iː/)" required>
+                <input type="text" id="exampleInput" placeholder="Пример (например: see)">
+            </div>
+            
+            <select id="categorySelect">
+                <option value="vowels">Гласные</option>
+                <option value="consonants">Согласные</option>
+                <option value="transcription">Транскрипция</option>
+            </select>
+            
+            <select id="groupSelect">
+                <option value="long_vowels">Долгие гласные</option>
+                <option value="short_vowels">Короткие гласные</option>
+                <option value="voiced_consonants">Звонкие согласные</option>
+                <option value="voiceless_consonants">Глухие согласные</option>
+                <option value="transcription_rules">Правила чтения</option>
+            </select>
+            
+            <input type="url" id="audioInput" placeholder="Ссылка на аудио (необязательно)">
             <textarea id="descriptionInput" placeholder="Описание: как произносить, особенности" rows="3"></textarea>
             
             <button class="btn btn-primary" id="addBtn">➕ Добавить</button>
             <button class="btn" id="cancelEditBtn" style="display: none; background: #95a5a6; color: white; margin-left: 10px;">Отменить</button>
-        </div>
-        
-        <div id="phoneticList">
-            <!-- Сюда будут добавляться звуки -->
         </div>
         
         <p style="margin-top: 40px; color: #607f94; font-size: 14px;">
@@ -206,84 +379,164 @@
         </p>
     </div>
     
+    <!-- ===== ДЕТАЛЬНОЕ ОКНО ===== -->
+    <div class="sound-detail-overlay" id="soundDetailOverlay">
+        <div class="sound-detail-card">
+            <button class="close-btn" onclick="closeSoundDetail()">×</button>
+            <span class="big-symbol" id="detailSymbol">/iː/</span>
+            <div class="big-example" id="detailExample">see</div>
+            <div class="big-description" id="detailDescription">Долгий гласный звук</div>
+            <div class="big-audio" id="detailAudio"></div>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-edit" id="detailEditBtn">✏️ Редактировать</button>
+                <button class="btn btn-danger" id="detailDeleteBtn">🗑️ Удалить</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ===== ПОДКЛЮЧАЕМ ОБОИ ===== -->
+    <script src="js/wallpaper.js"></script>
+    
     <script>
+        // ============================================
+        // ДАННЫЕ ПО УМОЛЧАНИЮ (встроенные звуки)
+        // ============================================
+        const DEFAULT_SOUNDS = [
+            // ===== ГЛАСНЫЕ =====
+            // Долгие
+            { id: 1, symbol: '/iː/', example: 'see', category: 'vowels', group: 'long_vowels', description: 'Долгий, как в слове "see". Губы растянуты в улыбку.' },
+            { id: 2, symbol: '/ɜː/', example: 'bird', category: 'vowels', group: 'long_vowels', description: 'Долгий, как в слове "bird". Язык по середине рта.' },
+            { id: 3, symbol: '/ɑː/', example: 'car', category: 'vowels', group: 'long_vowels', description: 'Долгий, как в слове "car". Рот широко открыт.' },
+            { id: 4, symbol: '/ɔː/', example: 'door', category: 'vowels', group: 'long_vowels', description: 'Долгий, как в слове "door". Губы округлены.' },
+            { id: 5, symbol: '/uː/', example: 'food', category: 'vowels', group: 'long_vowels', description: 'Долгий, как в слове "food". Губы сильно округлены.' },
+            // Короткие
+            { id: 6, symbol: '/ɪ/', example: 'sit', category: 'vowels', group: 'short_vowels', description: 'Короткий, как в слове "sit". Губы слегка растянуты.' },
+            { id: 7, symbol: '/e/', example: 'bed', category: 'vowels', group: 'short_vowels', description: 'Короткий, как в слове "bed". Рот приоткрыт.' },
+            { id: 8, symbol: '/æ/', example: 'cat', category: 'vowels', group: 'short_vowels', description: 'Короткий, как в слове "cat". Рот широко открыт.' },
+            { id: 9, symbol: '/ʌ/', example: 'cup', category: 'vowels', group: 'short_vowels', description: 'Короткий, как в слове "cup". Рот полуоткрыт.' },
+            { id: 10, symbol: '/ʊ/', example: 'book', category: 'vowels', group: 'short_vowels', description: 'Короткий, как в слове "book". Губы слегка округлены.' },
+            
+            // ===== СОГЛАСНЫЕ =====
+            // Звонкие
+            { id: 11, symbol: '/b/', example: 'bed', category: 'consonants', group: 'voiced_consonants', description: 'Звонкий, как в слове "bed". Губы смыкаются.' },
+            { id: 12, symbol: '/d/', example: 'dog', category: 'consonants', group: 'voiced_consonants', description: 'Звонкий, как в слове "dog". Язык у нёба.' },
+            { id: 13, symbol: '/g/', example: 'go', category: 'consonants', group: 'voiced_consonants', description: 'Звонкий, как в слове "go". Задняя часть языка к нёбу.' },
+            { id: 14, symbol: '/v/', example: 'very', category: 'consonants', group: 'voiced_consonants', description: 'Звонкий, как в слове "very". Верхние зубы к нижней губе.' },
+            { id: 15, symbol: '/z/', example: 'zero', category: 'consonants', group: 'voiced_consonants', description: 'Звонкий, как в слове "zero". Язык у зубов.' },
+            { id: 16, symbol: '/ð/', example: 'this', category: 'consonants', group: 'voiced_consonants', description: 'Звонкий, как в слове "this". Язык между зубами.' },
+            // Глухие
+            { id: 17, symbol: '/p/', example: 'pen', category: 'consonants', group: 'voiceless_consonants', description: 'Глухой, как в слове "pen". Губы смыкаются.' },
+            { id: 18, symbol: '/t/', example: 'ten', category: 'consonants', group: 'voiceless_consonants', description: 'Глухой, как в слове "ten". Язык у нёба.' },
+            { id: 19, symbol: '/k/', example: 'cat', category: 'consonants', group: 'voiceless_consonants', description: 'Глухой, как в слове "cat". Задняя часть языка к нёбу.' },
+            { id: 20, symbol: '/f/', example: 'five', category: 'consonants', group: 'voiceless_consonants', description: 'Глухой, как в слове "five". Верхние зубы к нижней губе.' },
+            { id: 21, symbol: '/s/', example: 'see', category: 'consonants', group: 'voiceless_consonants', description: 'Глухой, как в слове "see". Язык у зубов.' },
+            { id: 22, symbol: '/θ/', example: 'think', category: 'consonants', group: 'voiceless_consonants', description: 'Глухой, как в слове "think". Язык между зубами.' },
+            { id: 23, symbol: '/ʃ/', example: 'she', category: 'consonants', group: 'voiceless_consonants', description: 'Глухой, как в слове "she". Язык у нёба.' },
+            
+            // ===== ТРАНСКРИПЦИЯ =====
+            { id: 24, symbol: 'Транскрипция', example: 'word', category: 'transcription', group: 'transcription_rules', description: 'Как читать транскрипцию: /wɜːd/ → "word". Каждый символ = звук.' },
+        ];
+        
+        // ============================================
+        // ОСНОВНАЯ ЛОГИКА
+        // ============================================
         const STORAGE_KEY = 'english_phonetics';
         let editingId = null;
+        let currentCategory = 'vowels';
+        let currentDetailId = null;
         
-        function getItems() {
+        // Названия групп
+        const GROUP_NAMES = {
+            'long_vowels': 'Долгие гласные',
+            'short_vowels': 'Короткие гласные',
+            'voiced_consonants': 'Звонкие согласные',
+            'voiceless_consonants': 'Глухие согласные',
+            'transcription_rules': 'Правила чтения'
+        };
+        
+        // ===== РАБОТА С ДАННЫМИ =====
+        function getSounds() {
             const data = localStorage.getItem(STORAGE_KEY);
-            return data ? JSON.parse(data) : [];
+            if (data) {
+                const parsed = JSON.parse(data);
+                if (parsed && parsed.length > 0) return parsed;
+            }
+            // Если данных нет - сохраняем дефолтные
+            saveSounds(DEFAULT_SOUNDS);
+            return DEFAULT_SOUNDS;
         }
         
-        function saveItems(items) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        function saveSounds(sounds) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(sounds));
         }
         
         function generateId() {
             return Date.now() + Math.floor(Math.random() * 1000);
         }
         
-        function addItem(title, example, audio, description) {
-            const items = getItems();
-            
-            const newItem = {
+        // ===== ДОБАВЛЕНИЕ/РЕДАКТИРОВАНИЕ/УДАЛЕНИЕ =====
+        function addSound(symbol, example, category, group, audio, description) {
+            const sounds = getSounds();
+            const newSound = {
                 id: generateId(),
-                title: title.trim(),
+                symbol: symbol.trim(),
                 example: example.trim() || '',
+                category: category,
+                group: group,
                 audio: audio.trim() || '',
-                description: description.trim() || '',
-                date: new Date().toLocaleDateString('ru-RU')
+                description: description.trim() || ''
             };
-            
-            items.push(newItem);
-            saveItems(items);
-            renderItems();
+            sounds.push(newSound);
+            saveSounds(sounds);
+            renderAll();
             clearForm();
         }
         
-        function editItem(id) {
-            const items = getItems();
-            const item = items.find(i => i.id === id);
+        function editSound(id) {
+            const sounds = getSounds();
+            const sound = sounds.find(s => s.id === id);
+            if (!sound) return;
             
-            if (!item) return;
-            
-            document.getElementById('titleInput').value = item.title;
-            document.getElementById('exampleInput').value = item.example || '';
-            document.getElementById('audioInput').value = item.audio || '';
-            document.getElementById('descriptionInput').value = item.description || '';
+            document.getElementById('symbolInput').value = sound.symbol;
+            document.getElementById('exampleInput').value = sound.example || '';
+            document.getElementById('categorySelect').value = sound.category;
+            document.getElementById('groupSelect').value = sound.group;
+            document.getElementById('audioInput').value = sound.audio || '';
+            document.getElementById('descriptionInput').value = sound.description || '';
             
             document.getElementById('addBtn').textContent = '💾 Сохранить';
             document.getElementById('cancelEditBtn').style.display = 'inline-block';
             editingId = id;
         }
         
-        function updateItem(id, title, example, audio, description) {
-            const items = getItems();
-            const index = items.findIndex(i => i.id === id);
-            
+        function updateSound(id, symbol, example, category, group, audio, description) {
+            const sounds = getSounds();
+            const index = sounds.findIndex(s => s.id === id);
             if (index === -1) return;
             
-            items[index] = {
-                ...items[index],
-                title: title.trim(),
+            sounds[index] = {
+                ...sounds[index],
+                symbol: symbol.trim(),
                 example: example.trim() || '',
+                category: category,
+                group: group,
                 audio: audio.trim() || '',
                 description: description.trim() || ''
             };
             
-            saveItems(items);
-            renderItems();
+            saveSounds(sounds);
+            renderAll();
             clearForm();
             cancelEdit();
         }
         
-        function deleteItem(id) {
+        function deleteSound(id) {
             if (!confirm('Точно удалить этот звук?')) return;
-            
-            const items = getItems();
-            const filtered = items.filter(i => i.id !== id);
-            saveItems(filtered);
-            renderItems();
+            const sounds = getSounds();
+            const filtered = sounds.filter(s => s.id !== id);
+            saveSounds(filtered);
+            renderAll();
+            closeSoundDetail();
         }
         
         function cancelEdit() {
@@ -294,125 +547,190 @@
         }
         
         function clearForm() {
-            document.getElementById('titleInput').value = '';
+            document.getElementById('symbolInput').value = '';
             document.getElementById('exampleInput').value = '';
             document.getElementById('audioInput').value = '';
             document.getElementById('descriptionInput').value = '';
         }
         
+        // ===== ОТОБРАЖЕНИЕ =====
+        function getGroupedSounds(sounds, category) {
+            const filtered = category === 'all' ? sounds : sounds.filter(s => s.category === category);
+            const groups = {};
+            
+            filtered.forEach(sound => {
+                if (!groups[sound.group]) groups[sound.group] = [];
+                groups[sound.group].push(sound);
+            });
+            
+            return groups;
+        }
+        
+        function renderAll() {
+            const sounds = getSounds();
+            const container = document.getElementById('groupsContainer');
+            const totalSpan = document.getElementById('totalCount');
+            
+            totalSpan.textContent = sounds.length;
+            
+            const groups = getGroupedSounds(sounds, currentCategory);
+            const groupKeys = Object.keys(groups);
+            
+            if (groupKeys.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-message">
+                        📭 Нет звуков в этой категории. Добавь первый!
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            groupKeys.forEach(groupKey => {
+                const groupSounds = groups[groupKey];
+                const groupName = GROUP_NAMES[groupKey] || groupKey;
+                
+                html += `
+                    <div class="group-section active">
+                        <h3 class="group-title">${groupName} (${groupSounds.length})</h3>
+                        <div class="sound-table">
+                `;
+                
+                groupSounds.forEach(sound => {
+                    html += `
+                        <div class="sound-card" onclick="openSoundDetail(${sound.id})">
+                            <span class="symbol">${escapeHtml(sound.symbol)}</span>
+                            ${sound.example ? `<span class="example">${escapeHtml(sound.example)}</span>` : ''}
+                            ${sound.description ? `<span class="description">${escapeHtml(sound.description)}</span>` : ''}
+                            ${sound.audio ? `<button class="play-btn" onclick="event.stopPropagation(); playAudio('${escapeHtml(sound.audio)}')">▶️</button>` : ''}
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // ===== ДЕТАЛЬНЫЙ ПРОСМОТР =====
+        function openSoundDetail(id) {
+            const sounds = getSounds();
+            const sound = sounds.find(s => s.id === id);
+            if (!sound) return;
+            
+            currentDetailId = id;
+            
+            document.getElementById('detailSymbol').textContent = sound.symbol;
+            document.getElementById('detailExample').textContent = sound.example || 'Нет примера';
+            document.getElementById('detailDescription').textContent = sound.description || 'Нет описания';
+            
+            if (sound.audio) {
+                document.getElementById('detailAudio').innerHTML = `
+                    <audio controls>
+                        <source src="${escapeHtml(sound.audio)}" type="audio/mpeg">
+                        Ваш браузер не поддерживает аудио
+                    </audio>
+                `;
+            } else {
+                document.getElementById('detailAudio').innerHTML = '<span style="color:#95a5a6;">Аудио не добавлено</span>';
+            }
+            
+            document.getElementById('detailEditBtn').onclick = function() {
+                closeSoundDetail();
+                setTimeout(() => editSound(id), 300);
+            };
+            
+            document.getElementById('detailDeleteBtn').onclick = function() {
+                deleteSound(id);
+            };
+            
+            document.getElementById('soundDetailOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeSoundDetail() {
+            document.getElementById('soundDetailOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        
+        // ===== АУДИО =====
+        function playAudio(url) {
+            if (!url) return;
+            const audio = new Audio(url);
+            audio.play().catch(() => alert('Не удалось воспроизвести аудио. Проверь ссылку.'));
+        }
+        
+        // ===== ВСПОМОГАТЕЛЬНЫЕ =====
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
         
-        function playAudio(audioUrl) {
-            if (!audioUrl) {
-                alert('Аудио не добавлено!');
-                return;
-            }
-            
-            // Создаём аудио элемент
-            const audio = new Audio(audioUrl);
-            audio.play().catch(error => {
-                console.error('Ошибка воспроизведения:', error);
-                alert('Не удалось воспроизвести аудио. Проверь ссылку.');
-            });
-        }
-        
-        function renderItems() {
-            const items = getItems();
-            const list = document.getElementById('phoneticList');
-            const totalSpan = document.getElementById('totalCount');
-            
-            totalSpan.textContent = items.length;
-            
-            if (items.length === 0) {
-                list.innerHTML = `
-                    <div class="empty-message">
-                        📭 Пока нет звуков. Добавь первый!
-                    </div>
-                `;
-                return;
-            }
-            
-            list.innerHTML = items.map(item => `
-                <div class="phonetic-item">
-                    <div class="phonetic-header">
-                        <div>
-                            <h3>${escapeHtml(item.title)}</h3>
-                            ${item.example ? `<div class="example-word">Пример: ${escapeHtml(item.example)}</div>` : ''}
-                            <div style="font-size: 12px; color: #95a5a6; margin-top: 5px;">
-                                📅 ${item.date || 'Неизвестно'}
-                            </div>
-                        </div>
-                        <div class="phonetic-actions">
-                            ${item.audio ? `<button class="btn btn-play" onclick="playAudio('${escapeHtml(item.audio)}')">▶️ Слушать</button>` : ''}
-                            <button class="btn btn-edit" onclick="editItem(${item.id})">✏️</button>
-                            <button class="btn btn-danger" onclick="deleteItem(${item.id})">🗑️</button>
-                        </div>
-                    </div>
-                    ${item.description ? `<div class="phonetic-content">${escapeHtml(item.description)}</div>` : ''}
-                    ${item.audio ? `
-                        <div class="audio-player">
-                            <audio controls>
-                                <source src="${escapeHtml(item.audio)}" type="audio/mpeg">
-                                Твой браузер не поддерживает аудио
-                            </audio>
-                        </div>
-                    ` : ''}
-                </div>
-            `).join('');
-        }
-        
-        // Обработчики
+        // ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
         document.getElementById('addBtn').addEventListener('click', function() {
-            const title = document.getElementById('titleInput').value;
+            const symbol = document.getElementById('symbolInput').value;
             const example = document.getElementById('exampleInput').value;
+            const category = document.getElementById('categorySelect').value;
+            const group = document.getElementById('groupSelect').value;
             const audio = document.getElementById('audioInput').value;
             const description = document.getElementById('descriptionInput').value;
             
-            if (!title.trim()) {
-                alert('Пожалуйста, заполни название звука!');
+            if (!symbol.trim()) {
+                alert('Пожалуйста, введите символ звука!');
                 return;
             }
             
             if (editingId !== null) {
-                updateItem(editingId, title, example, audio, description);
+                updateSound(editingId, symbol, example, category, group, audio, description);
             } else {
-                addItem(title, example, audio, description);
+                addSound(symbol, example, category, group, audio, description);
             }
         });
         
         document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
         
-        // Загрузка
-        renderItems();
+        // Переключение категорий
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentCategory = this.dataset.category;
+                renderAll();
+            });
+        });
         
-        // Тестовые данные
-        const testItems = getItems();
-        if (testItems.length === 0) {
-            addItem(
-                '/θ/ - глухой межзубный',
-                'think, thanks, three',
-                '',
-                'Кончик языка между зубами. Произносим как "с", но с шипением.'
-            );
-            addItem(
-                '/ð/ - звонкий межзубный',
-                'this, that, the, mother',
-                '',
-                'Кончик языка между зубами. Произносим как "з", но с вибрацией.'
-            );
-            addItem(
-                '/r/ - альвеолярный',
-                'red, run, very',
-                '',
-                'Язык свёрнут в трубочку или поднят к нёбу. Губы округлены.'
-            );
-        }
+        // Закрытие детального окна по клику вне карточки
+        document.getElementById('soundDetailOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeSoundDetail();
+        });
+        
+        // Enter для быстрого добавления
+        document.getElementById('symbolInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') document.getElementById('exampleInput').focus();
+        });
+        
+        document.getElementById('exampleInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') document.getElementById('audioInput').focus();
+        });
+        
+        document.getElementById('audioInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') document.getElementById('descriptionInput').focus();
+        });
+        
+        document.getElementById('descriptionInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('addBtn').click();
+            }
+        });
+        
+        // ===== ЗАГРУЗКА =====
+        renderAll();
     </script>
-        <!-- Управление обоями -->
-<script src="js/wallpaper.js"></script>
 </body>
 </html>
